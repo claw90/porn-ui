@@ -60,15 +60,24 @@ function Router() {
 }
 
 function App() {
-  return (
-    <div>
+  try {
+    return (
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
           <Router />
+          <Toaster />
         </TooltipProvider>
       </QueryClientProvider>
-    </div>
-  );
+    );
+  } catch (error) {
+    console.error('App error:', error);
+    return (
+      <div className="min-h-screen bg-slate-900 text-white p-8">
+        <h1>Application Error</h1>
+        <p>Please refresh the page</p>
+      </div>
+    );
+  }
 }
 
 export default App;
