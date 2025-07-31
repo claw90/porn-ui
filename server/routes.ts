@@ -476,28 +476,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       const files = req.files as { [fieldname: string]: Express.Multer.File[] };
-      
-      if (!files.video || !files.targetFace) {
-        console.log('Missing files:', { video: !!files.video, targetFace: !!files.targetFace });
-        return res.status(400).json({ 
-          error: 'Both video and target face files are required',
+
+      // Require at least one file
+      if (!files.video && !files.targetFace) {
+        console.log('No files provided');
+        return res.status(400).json({
+          error: 'At least one file (video or target face) is required',
           received: Object.keys(files || {})
         });
       }
 
-      const videoFile = files.video[0];
-      const targetFaceFile = files.targetFace[0];
+      const videoFile = files.video?.[0];
+      const targetFaceFile = files.targetFace?.[0];
 
       console.log('Files received:', {
-        video: { name: videoFile.originalname, type: videoFile.mimetype, size: videoFile.size },
-        targetFace: { name: targetFaceFile.originalname, type: targetFaceFile.mimetype, size: targetFaceFile.size }
+        video: videoFile ? { name: videoFile.originalname, type: videoFile.mimetype, size: videoFile.size } : null,
+        targetFace: targetFaceFile ? { name: targetFaceFile.originalname, type: targetFaceFile.mimetype, size: targetFaceFile.size } : null
       });
 
       const analysisData = {
-        videoFilename: videoFile.originalname,
-        videoPath: videoFile.path,
-        targetFaceFilename: targetFaceFile.originalname,
-        targetFacePath: targetFaceFile.path,
+        videoFilename: videoFile?.originalname || null,
+        videoPath: videoFile?.path || null,
+        targetFaceFilename: targetFaceFile?.originalname || null,
+        targetFacePath: targetFaceFile?.path || null,
         tolerance: parseFloat(req.body.tolerance) || 0.5,
         frameSkip: parseInt(req.body.frameSkip) || 5,
         includeThumbnails: req.body.includeThumbnails === 'true' ? 1 : 0,
