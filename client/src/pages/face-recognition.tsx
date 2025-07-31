@@ -51,6 +51,8 @@ export default function FaceRecognition() {
   const [includeThumbnails, setIncludeThumbnails] = useState(true);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [currentAnalysis, setCurrentAnalysis] = useState<string | null>(null);
+  const [videoDragOver, setVideoDragOver] = useState(false);
+  const [faceDragOver, setFaceDragOver] = useState(false);
 
   const { data: analyses = [], refetch } = useQuery({
     queryKey: ['analyses'],
