@@ -539,7 +539,7 @@ export default function Recommendations() {
                     </CardHeader>
                     <CardContent>
                       <div className="flex flex-wrap gap-2">
-                        {userProfile.personalityTraits.map((trait, index) => (
+                        {(userProfile.personalityTraits || []).map((trait, index) => (
                           <Badge key={index} className="bg-purple-500/20 text-purple-300">
                             {trait}
                           </Badge>
