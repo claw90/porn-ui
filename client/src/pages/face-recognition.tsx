@@ -426,11 +426,11 @@ export default function FaceRecognition() {
                   </div>
                 </div>
 
-                {/* Analysis Parameters */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="space-y-2">
-                    <Label className="text-white font-medium">Tolerance</Label>
-                    <div className="space-y-2">
+                {/* Analysis Parameters & Submit */}
+                <div className="flex flex-col md:flex-row gap-4 items-end">
+                  <div className="flex-1 grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <div className="space-y-1">
+                      <Label className="text-white text-sm">Tolerance: {tolerance}</Label>
                       <input
                         type="range"
                         min="0.3"
@@ -438,51 +438,48 @@ export default function FaceRecognition() {
                         step="0.05"
                         value={tolerance}
                         onChange={(e) => setTolerance(parseFloat(e.target.value))}
-                        className="w-full"
+                        className="w-full h-2"
                       />
-                      <div className="flex justify-between text-xs text-slate-400">
-                        <span>Strict ({tolerance})</span>
+                      <div className="flex justify-between text-xs text-slate-500">
+                        <span>Strict</span>
                         <span>Lenient</span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-1">
+                      <Label className="text-white text-sm">Frame Skip</Label>
+                      <Input
+                        type="number"
+                        min="1"
+                        max="30"
+                        value={frameSkip}
+                        onChange={(e) => setFrameSkip(parseInt(e.target.value) || 5)}
+                        className="bg-slate-800 border-slate-600 text-white h-8"
+                      />
+                      <p className="text-xs text-slate-500">Every Nth frame</p>
+                    </div>
+
+                    <div className="space-y-1">
+                      <Label className="text-white text-sm">Options</Label>
+                      <div className="flex items-center space-x-2 h-8">
+                        <input
+                          type="checkbox"
+                          id="thumbnails"
+                          checked={includeThumbnails}
+                          onChange={(e) => setIncludeThumbnails(e.target.checked)}
+                          className="rounded"
+                        />
+                        <Label htmlFor="thumbnails" className="text-white text-sm">
+                          Thumbnails
+                        </Label>
                       </div>
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label className="text-white font-medium">Frame Skip</Label>
-                    <Input
-                      type="number"
-                      min="1"
-                      max="30"
-                      value={frameSkip}
-                      onChange={(e) => setFrameSkip(parseInt(e.target.value) || 5)}
-                      className="bg-slate-800 border-slate-600 text-white"
-                    />
-                    <p className="text-xs text-slate-400">Process every Nth frame</p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label className="text-white font-medium">Options</Label>
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        id="thumbnails"
-                        checked={includeThumbnails}
-                        onChange={(e) => setIncludeThumbnails(e.target.checked)}
-                        className="rounded"
-                      />
-                      <Label htmlFor="thumbnails" className="text-white text-sm">
-                        Generate thumbnails
-                      </Label>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Submit */}
-                <div className="flex justify-end">
                   <Button
                     onClick={handleSubmit}
                     disabled={getAnalysisMode() === "none" || isAnalyzing}
-                    className="bg-purple-600 hover:bg-purple-700 text-white"
+                    className="bg-purple-600 hover:bg-purple-700 text-white md:min-w-[180px]"
                   >
                     <Brain className={cn("w-4 h-4 mr-2", isAnalyzing && "animate-pulse")} />
                     {getSubmitButtonText()}
