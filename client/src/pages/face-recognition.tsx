@@ -94,7 +94,12 @@ export default function FaceRecognition() {
 
   const handleSubmit = async () => {
     const mode = getAnalysisMode();
-    if (mode === "none" || isAnalyzing) return;
+    if (mode !== "ready" || isAnalyzing) return;
+
+    if (!videoFile || !faceFile) {
+      alert('Both video and target face files are required for analysis');
+      return;
+    }
 
     setIsAnalyzing(true);
 
