@@ -318,138 +318,111 @@ export default function FaceRecognition() {
           </TabsList>
 
           <TabsContent value="analyze" className="space-y-6">
-            {/* Analysis Modes Guide */}
-            <Card className="bg-gradient-to-r from-purple-900/20 to-slate-900 border-purple-700/50">
-              <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Target className="w-5 h-5 text-purple-400" />
-                  Analysis Modes
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="p-4 bg-slate-800/50 rounded-lg">
-                    <div className="flex items-center gap-2 mb-2">
-                      <VideoIcon className="w-4 h-4 text-blue-400" />
-                      <span className="font-medium text-white text-sm">Video Only</span>
-                    </div>
-                    <p className="text-xs text-slate-400">
-                      Upload just a video to detect and analyze all faces found in the content
-                    </p>
-                  </div>
-                  <div className="p-4 bg-slate-800/50 rounded-lg">
-                    <div className="flex items-center gap-2 mb-2">
-                      <FileImage className="w-4 h-4 text-green-400" />
-                      <span className="font-medium text-white text-sm">Face Only</span>
-                    </div>
-                    <p className="text-xs text-slate-400">
-                      Upload a face image to analyze characteristics and features
-                    </p>
-                  </div>
-                  <div className="p-4 bg-slate-800/50 rounded-lg">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Search className="w-4 h-4 text-purple-400" />
-                      <span className="font-medium text-white text-sm">Both Files</span>
-                    </div>
-                    <p className="text-xs text-slate-400">
-                      Find specific face matches by comparing target face against video content
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* File Upload Section */}
+            {/* Upload & Analysis Section */}
             <Card className="bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700">
-              <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Upload className="w-5 h-5 text-purple-400" />
-                  Upload Files
+              <CardHeader className="pb-4">
+                <CardTitle className="text-white flex items-center justify-between">
+                  <span className="flex items-center gap-2">
+                    <Upload className="w-5 h-5 text-purple-400" />
+                    Face Analysis
+                  </span>
+                  <Badge className="bg-purple-500/20 text-purple-300">{getAnalysisMode()}</Badge>
                 </CardTitle>
-                <div className="text-slate-400 text-sm">
-                  Upload at least one file to begin analysis. Mode: <Badge className="ml-2 bg-purple-500/20 text-purple-300">{getAnalysisMode()}</Badge>
-                </div>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <CardContent className="space-y-4">
+                {/* Upload Areas Side by Side */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Video Upload */}
-                  <div className="space-y-3">
-                    <Label className="text-white font-medium">Video File (Optional)</Label>
-                    <div
-                      className={cn(
-                        "border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer",
-                        videoDragOver
-                          ? "border-purple-400 bg-purple-500/10"
-                          : "border-slate-600 hover:border-slate-500"
-                      )}
-                      onDragOver={handleVideoDragOver}
-                      onDragLeave={handleVideoDragLeave}
-                      onDrop={handleVideoDrop}
-                      onClick={() => document.getElementById('video-upload')?.click()}
-                    >
-                      <VideoIcon className={cn(
-                        "w-8 h-8 mx-auto mb-3",
-                        videoDragOver ? "text-purple-400" : "text-slate-400"
-                      )} />
-                      <input
-                        type="file"
-                        accept="video/*"
-                        onChange={(e) => setVideoFile(e.target.files?.[0] || null)}
-                        className="hidden"
-                        id="video-upload"
-                      />
-                      <div className="text-white font-medium mb-1">
-                        {videoDragOver
-                          ? 'Drop video file here'
-                          : videoFile
-                            ? videoFile.name
-                            : 'Choose or drop video file'
-                        }
-                      </div>
-                      <div className="text-xs text-slate-400">
-                        MP4, AVI, MOV, MKV supported
-                      </div>
+                  <div
+                    className={cn(
+                      "border-2 border-dashed rounded-lg p-4 text-center transition-colors cursor-pointer",
+                      videoDragOver
+                        ? "border-purple-400 bg-purple-500/10"
+                        : "border-slate-600 hover:border-slate-500"
+                    )}
+                    onDragOver={handleVideoDragOver}
+                    onDragLeave={handleVideoDragLeave}
+                    onDrop={handleVideoDrop}
+                    onClick={() => document.getElementById('video-upload')?.click()}
+                  >
+                    <VideoIcon className={cn(
+                      "w-6 h-6 mx-auto mb-2",
+                      videoDragOver ? "text-purple-400" : "text-blue-400"
+                    )} />
+                    <input
+                      type="file"
+                      accept="video/*"
+                      onChange={(e) => setVideoFile(e.target.files?.[0] || null)}
+                      className="hidden"
+                      id="video-upload"
+                    />
+                    <div className="text-white font-medium text-sm mb-1">
+                      {videoDragOver
+                        ? 'Drop video here'
+                        : videoFile
+                          ? videoFile.name.length > 20 ? videoFile.name.substring(0, 20) + '...' : videoFile.name
+                          : 'Video File'
+                      }
+                    </div>
+                    <div className="text-xs text-slate-400">
+                      {videoDragOver ? 'Release to upload' : 'MP4, AVI, MOV, MKV'}
                     </div>
                   </div>
 
                   {/* Face Upload */}
-                  <div className="space-y-3">
-                    <Label className="text-white font-medium">Target Face Image (Optional)</Label>
-                    <div
-                      className={cn(
-                        "border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer",
-                        faceDragOver
-                          ? "border-green-400 bg-green-500/10"
-                          : "border-slate-600 hover:border-slate-500"
-                      )}
-                      onDragOver={handleFaceDragOver}
-                      onDragLeave={handleFaceDragLeave}
-                      onDrop={handleFaceDrop}
-                      onClick={() => document.getElementById('face-upload')?.click()}
-                    >
-                      <FileImage className={cn(
-                        "w-8 h-8 mx-auto mb-3",
-                        faceDragOver ? "text-green-400" : "text-slate-400"
-                      )} />
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => setFaceFile(e.target.files?.[0] || null)}
-                        className="hidden"
-                        id="face-upload"
-                      />
-                      <div className="text-white font-medium mb-1">
-                        {faceDragOver
-                          ? 'Drop image file here'
-                          : faceFile
-                            ? faceFile.name
-                            : 'Choose or drop face image'
-                        }
-                      </div>
-                      <div className="text-xs text-slate-400">
-                        JPG, PNG, JPEG supported
-                      </div>
+                  <div
+                    className={cn(
+                      "border-2 border-dashed rounded-lg p-4 text-center transition-colors cursor-pointer",
+                      faceDragOver
+                        ? "border-green-400 bg-green-500/10"
+                        : "border-slate-600 hover:border-slate-500"
+                    )}
+                    onDragOver={handleFaceDragOver}
+                    onDragLeave={handleFaceDragLeave}
+                    onDrop={handleFaceDrop}
+                    onClick={() => document.getElementById('face-upload')?.click()}
+                  >
+                    <FileImage className={cn(
+                      "w-6 h-6 mx-auto mb-2",
+                      faceDragOver ? "text-green-400" : "text-green-400"
+                    )} />
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => setFaceFile(e.target.files?.[0] || null)}
+                      className="hidden"
+                      id="face-upload"
+                    />
+                    <div className="text-white font-medium text-sm mb-1">
+                      {faceDragOver
+                        ? 'Drop image here'
+                        : faceFile
+                          ? faceFile.name.length > 20 ? faceFile.name.substring(0, 20) + '...' : faceFile.name
+                          : 'Target Face'
+                      }
                     </div>
+                    <div className="text-xs text-slate-400">
+                      {faceDragOver ? 'Release to upload' : 'JPG, PNG, JPEG'}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Analysis Modes Info */}
+                <div className="grid grid-cols-3 gap-2 text-xs">
+                  <div className="text-center p-2 bg-slate-800/30 rounded">
+                    <VideoIcon className="w-3 h-3 mx-auto mb-1 text-blue-400" />
+                    <div className="text-slate-300">Video Only</div>
+                    <div className="text-slate-500">Detect all faces</div>
+                  </div>
+                  <div className="text-center p-2 bg-slate-800/30 rounded">
+                    <FileImage className="w-3 h-3 mx-auto mb-1 text-green-400" />
+                    <div className="text-slate-300">Face Only</div>
+                    <div className="text-slate-500">Analyze features</div>
+                  </div>
+                  <div className="text-center p-2 bg-slate-800/30 rounded">
+                    <Search className="w-3 h-3 mx-auto mb-1 text-purple-400" />
+                    <div className="text-slate-300">Both Files</div>
+                    <div className="text-slate-500">Find matches</div>
                   </div>
                 </div>
 
