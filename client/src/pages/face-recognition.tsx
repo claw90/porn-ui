@@ -375,8 +375,22 @@ export default function FaceRecognition() {
                   {/* Video Upload */}
                   <div className="space-y-3">
                     <Label className="text-white font-medium">Video File (Optional)</Label>
-                    <div className="border-2 border-dashed border-slate-600 rounded-lg p-6 text-center hover:border-slate-500 transition-colors">
-                      <VideoIcon className="w-8 h-8 mx-auto mb-3 text-slate-400" />
+                    <div
+                      className={cn(
+                        "border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer",
+                        videoDragOver
+                          ? "border-purple-400 bg-purple-500/10"
+                          : "border-slate-600 hover:border-slate-500"
+                      )}
+                      onDragOver={handleVideoDragOver}
+                      onDragLeave={handleVideoDragLeave}
+                      onDrop={handleVideoDrop}
+                      onClick={() => document.getElementById('video-upload')?.click()}
+                    >
+                      <VideoIcon className={cn(
+                        "w-8 h-8 mx-auto mb-3",
+                        videoDragOver ? "text-purple-400" : "text-slate-400"
+                      )} />
                       <input
                         type="file"
                         accept="video/*"
@@ -384,14 +398,17 @@ export default function FaceRecognition() {
                         className="hidden"
                         id="video-upload"
                       />
-                      <label htmlFor="video-upload" className="cursor-pointer">
-                        <div className="text-white font-medium mb-1">
-                          {videoFile ? videoFile.name : 'Choose video file'}
-                        </div>
-                        <div className="text-xs text-slate-400">
-                          MP4, AVI, MOV, MKV supported
-                        </div>
-                      </label>
+                      <div className="text-white font-medium mb-1">
+                        {videoDragOver
+                          ? 'Drop video file here'
+                          : videoFile
+                            ? videoFile.name
+                            : 'Choose or drop video file'
+                        }
+                      </div>
+                      <div className="text-xs text-slate-400">
+                        MP4, AVI, MOV, MKV supported
+                      </div>
                     </div>
                   </div>
 
