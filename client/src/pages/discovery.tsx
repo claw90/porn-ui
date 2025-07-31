@@ -67,7 +67,7 @@ interface DiscoveryStats {
 
 const platforms = [
   { id: 'thisvid', name: 'ThisVid', icon: '🔥', color: 'orange' },
-  { id: 'pornhub', name: 'PornHub', icon: '��', color: 'yellow' },
+  { id: 'pornhub', name: 'PornHub', icon: '🔞', color: 'yellow' },
   { id: 'xvideos', name: 'XVideos', icon: '❌', color: 'red' },
   { id: 'redtube', name: 'RedTube', icon: '🔴', color: 'red' },
   { id: 'xhamster', name: 'XHamster', icon: '🐹', color: 'orange' },
@@ -431,7 +431,7 @@ export default function Discovery() {
                       <div>
                         <span className="text-slate-400">Top Categories:</span>
                         <div className="flex flex-wrap gap-1 mt-1">
-                          {profile.preferredCategories.slice(0, 3).map((cat: string, index: number) => (
+                          {(profile.preferredCategories || []).slice(0, 3).map((cat: string, index: number) => (
                             <Badge key={index} className="bg-orange-500/20 text-orange-300 text-xs">
                               {cat}
                             </Badge>
@@ -441,7 +441,7 @@ export default function Discovery() {
                       <div>
                         <span className="text-slate-400">Preferred Tags:</span>
                         <div className="flex flex-wrap gap-1 mt-1">
-                          {profile.preferredTags.slice(0, 4).map((tag: string, index: number) => (
+                          {(profile.preferredTags || []).slice(0, 4).map((tag: string, index: number) => (
                             <Badge key={index} variant="outline" className="text-slate-300 border-slate-600 text-xs">
                               {tag}
                             </Badge>
@@ -451,7 +451,7 @@ export default function Discovery() {
                       <div>
                         <span className="text-slate-400">Style:</span>
                         <div className="flex flex-wrap gap-1 mt-1">
-                          {profile.personalityTraits.slice(0, 2).map((trait: string, index: number) => (
+                          {(profile.personalityTraits || []).slice(0, 2).map((trait: string, index: number) => (
                             <Badge key={index} className="bg-purple-500/20 text-purple-300 text-xs">
                               {trait}
                             </Badge>
