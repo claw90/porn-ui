@@ -115,16 +115,13 @@ export default function FaceRecognition() {
         body: formData,
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        try {
-          const error = await response.json();
-          throw new Error(error.message || 'Analysis failed');
-        } catch {
-          throw new Error(`Analysis failed with status: ${response.status}`);
-        }
+        throw new Error(data.message || 'Analysis failed');
       }
 
-      const analysis = await response.json();
+      const analysis = data;
       setCurrentAnalysis(analysis.id);
       
       // Start polling for status
