@@ -116,8 +116,12 @@ export default function FaceRecognition() {
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Analysis failed');
+        try {
+          const error = await response.json();
+          throw new Error(error.message || 'Analysis failed');
+        } catch {
+          throw new Error(`Analysis failed with status: ${response.status}`);
+        }
       }
 
       const analysis = await response.json();
