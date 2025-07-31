@@ -5,7 +5,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import CollapsibleSidebar from "@/components/CollapsibleSidebar";
-import { AIAssistant, AIAssistantButton } from "@/components/AIAssistant";
+// import { AIAssistant, AIAssistantButton } from "@/components/AIAssistant";
 import Home from "@/pages/home";
 import Library from "@/pages/library";
 import Performers from "@/pages/performers";
@@ -42,9 +42,9 @@ function Router() {
           <Route component={NotFound} />
         </Switch>
       </CollapsibleSidebar>
-      
-      {/* AI Assistant Components - Disabled */}
-      {/* 
+
+      {/* AI Assistant Components - Disabled for now */}
+      {/*
       <AIAssistantButton 
         onClick={handleToggleAIAssistant} 
         isOpen={isAIAssistantOpen} 
@@ -70,7 +70,7 @@ function App() {
       </QueryClientProvider>
     );
   } catch (error) {
-    console.error('App error:', error);
+    console.error("App error:", error);
     return (
       <div className="min-h-screen bg-slate-900 text-white p-8">
         <h1>Application Error</h1>
