@@ -302,7 +302,7 @@ export default function FaceRecognition() {
           </p>
         </div>
 
-        <Tabs value={selectedTab} onValueChange={setSelectedTab} className="space-y-6">
+        <Tabs value={selectedTab} onValueChange={setSelectedTab} className="space-y-4">
           <TabsList className="bg-slate-800 border-slate-700">
             <TabsTrigger value="analyze" className="data-[state=active]:bg-purple-600">
               <Brain className="w-4 h-4 mr-2" />
