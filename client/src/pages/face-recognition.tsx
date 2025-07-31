@@ -76,22 +76,20 @@ export default function FaceRecognition() {
   });
 
   const getAnalysisMode = () => {
-    if (videoFile && faceFile) return "both";
-    if (videoFile) return "video-only";
-    if (faceFile) return "face-only";
-    return "none";
+    if (videoFile && faceFile) return "ready";
+    return "incomplete";
   };
 
   const getSubmitButtonText = () => {
     const mode = getAnalysisMode();
     if (isAnalyzing) return "Analyzing...";
-    
-    switch (mode) {
-      case "both": return "Find Specific Face";
-      case "video-only": return "Detect All Faces";
-      case "face-only": return "Analyze Face Characteristics";
-      default: return "Upload Files to Start";
-    }
+
+    if (mode === "ready") return "Find Specific Face";
+
+    if (!videoFile && !faceFile) return "Upload Both Files to Start";
+    if (!videoFile) return "Upload Video File";
+    if (!faceFile) return "Upload Target Face";
+    return "Upload Files to Start";
   };
 
   const handleSubmit = async () => {
