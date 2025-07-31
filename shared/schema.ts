@@ -424,6 +424,13 @@ export const insertAnalysisSchema = createInsertSchema(analyses).pick({
   tolerance: true,
   frameSkip: true,
   includeThumbnails: true,
+}).partial({
+  videoId: true,
+  performerId: true,
+  videoFilename: true,
+  videoPath: true,
+  targetFaceFilename: true,
+  targetFacePath: true,
 });
 
 export const insertPlaylistSchema = createInsertSchema(playlists).pick({
