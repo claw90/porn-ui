@@ -1,299 +1,306 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { useToast } from "@/hooks/use-toast";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
-import { Upload, Link, CheckCircle, XCircle, AlertCircle } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { Upload, CheckCircle, XCircle, Link, AlertCircle } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-interface BulkImportResult {
+interface ImportResult {
   url: string;
   success: boolean;
-  error?: string;
   title?: string;
+  error?: string;
+  videoId?: string;
 }
 
 interface BulkUrlImportProps {
-  onComplete?: (results: BulkImportResult[]) => void;
+  onImportComplete?: (results: ImportResult[]) => void;
 }
 
-export function BulkUrlImport({ onComplete }: BulkUrlImportProps) {
-  const [urlText, setUrlText] = useState("");
-  const [isProcessing, setIsProcessing] = useState(false);
+export default function BulkUrlImport({ onImportComplete }: BulkUrlImportProps) {
+  const [urls, setUrls] = useState("");
+  const [isImporting, setIsImporting] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [results, setResults] = useState<BulkImportResult[]>([]);
-  const [showResults, setShowResults] = useState(false);
-
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
+  const [results, setResults] = useState<ImportResult[]>([]);
+  const [currentUrl, setCurrentUrl] = useState("");
 
   const extractUrls = (text: string): string[] => {
-    const urlRegex = /https?:\/\/[^\s\n\r]+/gi;
-    const matches = text.match(urlRegex) || [];
-    // Remove duplicates and clean URLs
-    return Array.from(new Set(matches.map(url => url.trim())));
-  };
-
-  const extractTitleFromUrl = (url: string): string => {
-    try {
-      const urlParts = url.split('/');
-      const lastPart = urlParts[urlParts.length - 1];
-      return lastPart.replace(/\.[^/.]+$/, "").replace(/[-_]/g, ' ') || 'External Video';
-    } catch {
-      return 'External Video';
-    }
-  };
-
-  const processUrls = async () => {
-    const urls = extractUrls(urlText);
+    // Enhanced URL detection for adult video platforms
+    const urlRegex = /(https?:\/\/(?:www\.)?(?:thisvid\.com|pornhub\.com|xvideos\.com|redtube\.com|xhamster\.com|xtube\.com|tube8\.com|spankbang\.com|youporn\.com|beeg\.com|motherless\.com|drtuber\.com|tnaflix\.com|vporn\.com|ashemaletube\.com|gaymaletube\.com|gayforit\.eu|boyfriendtv\.com|men\.com|cockyboys\.com|seancody\.com|helixstudios\.com|nextdoorstudios\.com|icon-male\.com|extrabigdicks\.com|randyblue\.com|corbinfisher\.com|chaos-men\.com|chaosmen\.com|activeduty\.com|militaryclassified\.com|americanmusclesexnet\.com|straightfraternity\.com|extrabigdicks\.com|hungyoungbrit\.com|collegeboyphysicals\.com|fraternity-x\.com|fratx\.com|sketchy-sex\.com|rawfuck\.club|twinktop\.com|funsizeboys\.com|familydick\.com|mormonboyz\.com|missionaryboys\.com|yesfather\.com|trojanmen\.com|stag-homme\.com|lucasentertainment\.com|rawcastings\.com|muscle-hunks\.com|legendmen\.com|hotolder\.com|hairyandraw\.com|disruptivefilms\.com|nextdoorraw\.com|men-first-time\.com|gayroom\.com|menover30\.com|dylanlucas\.com|icongay\.com|transangels\.com|grooby\.com|tgirlnetwork\.com|transsensual\.com|kink\.com|boundgods\.com|nakedkombat\.com|builtforthis\.com|meninpain\.com|whippedass\.com|hogtied\.com|devicebondage\.com|theupperfloor\.com|publicdisgrace\.com|boundgangbangs\.com)[^\s<>"']*)/gi;
     
-    if (urls.length === 0) {
-      toast({
-        title: "No URLs Found",
-        description: "Please paste some valid URLs to import",
-        variant: "destructive",
-      });
+    const matches = text.match(urlRegex) || [];
+    
+    // Also try to extract from lines that might be formatted differently
+    const lines = text.split('\n');
+    const additionalUrls: string[] = [];
+    
+    lines.forEach(line => {
+      const trimmed = line.trim();
+      if (trimmed.startsWith('http') && !matches.some(match => match.includes(trimmed))) {
+        additionalUrls.push(trimmed);
+      }
+    });
+    
+    return [...matches, ...additionalUrls].filter((url, index, arr) => 
+      arr.indexOf(url) === index // Remove duplicates
+    );
+  };
+
+  const extractTitle = (url: string): string => {
+    try {
+      const urlObj = new URL(url);
+      const pathname = urlObj.pathname;
+      
+      // ThisVid URLs
+      if (url.includes('thisvid.com')) {
+        const match = pathname.match(/\/videos?\/(.+)/);
+        if (match) {
+          return decodeURIComponent(match[1]).replace(/-/g, ' ').replace(/\//g, ' ');
+        }
+      }
+      
+      // PornHub URLs
+      if (url.includes('pornhub.com')) {
+        const match = pathname.match(/\/view_video\.php/) || pathname.match(/\/videos?\/.+/);
+        if (match) {
+          const title = pathname.split('/').pop() || '';
+          return decodeURIComponent(title).replace(/-/g, ' ');
+        }
+      }
+      
+      // XVideos URLs
+      if (url.includes('xvideos.com')) {
+        const match = pathname.match(/\/video\d+\/(.+)/);
+        if (match) {
+          return decodeURIComponent(match[1]).replace(/_/g, ' ').replace(/-/g, ' ');
+        }
+      }
+      
+      // Generic extraction for other sites
+      const segments = pathname.split('/').filter(segment => segment.length > 0);
+      if (segments.length > 0) {
+        const lastSegment = segments[segments.length - 1];
+        return decodeURIComponent(lastSegment).replace(/[-_]/g, ' ');
+      }
+      
+      return `Video from ${urlObj.hostname}`;
+    } catch (error) {
+      return `Video from ${url.substring(0, 30)}...`;
+    }
+  };
+
+  const handleImport = async () => {
+    if (!urls.trim()) return;
+
+    const urlList = extractUrls(urls);
+    
+    if (urlList.length === 0) {
+      alert("No valid URLs found. Please paste video URLs from supported platforms.");
       return;
     }
 
-    if (urls.length > 500) {
-      toast({
-        title: "Too Many URLs",
-        description: "Please limit bulk imports to 500 URLs at a time",
-        variant: "destructive",
-      });
+    if (urlList.length > 500) {
+      alert("Maximum 500 URLs per import. Please split into smaller batches.");
       return;
     }
 
-    setIsProcessing(true);
-    setProgress(0);
+    setIsImporting(true);
     setResults([]);
-    setShowResults(true);
+    setProgress(0);
 
-    const importResults: BulkImportResult[] = [];
+    const importResults: ImportResult[] = [];
 
-    for (let i = 0; i < urls.length; i++) {
-      const url = urls[i];
-      const title = extractTitleFromUrl(url);
+    for (let i = 0; i < urlList.length; i++) {
+      const url = urlList[i];
+      setCurrentUrl(url);
+      setProgress((i / urlList.length) * 100);
 
       try {
-        // Validate URL format
-        new URL(url);
-
-        await apiRequest("/api/videos/url", {
-          method: "POST",
+        const title = extractTitle(url);
+        
+        const response = await fetch('/api/videos/url', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
           body: JSON.stringify({
+            title,
             videoUrl: url,
-            title: title,
-            tags: ["bulk-import"],
-            performers: [],
-            categories: [],
+            isExternal: true,
+            tags: ['imported', 'bulk'],
+            categories: ['adult']
           }),
-          headers: { "Content-Type": "application/json" }
         });
 
-        importResults.push({
-          url,
-          success: true,
-          title,
-        });
-
-        toast({
-          title: "URL Added",
-          description: `Successfully added: ${title}`,
-        });
-
-      } catch (error: any) {
+        if (response.ok) {
+          const video = await response.json();
+          importResults.push({
+            url,
+            success: true,
+            title: video.title || title,
+            videoId: video.id
+          });
+        } else {
+          const error = await response.json();
+          importResults.push({
+            url,
+            success: false,
+            error: error.message || `HTTP ${response.status}`,
+            title
+          });
+        }
+      } catch (error) {
         importResults.push({
           url,
           success: false,
-          error: error.message || "Failed to add URL",
+          error: error instanceof Error ? error.message : 'Unknown error',
+          title: extractTitle(url)
         });
       }
-
-      setProgress(((i + 1) / urls.length) * 100);
-      setResults([...importResults]);
 
       // Small delay to prevent overwhelming the server
       await new Promise(resolve => setTimeout(resolve, 100));
     }
 
-    setIsProcessing(false);
-    queryClient.invalidateQueries({ queryKey: ["/api/videos"] });
+    setProgress(100);
+    setResults(importResults);
+    setIsImporting(false);
+    setCurrentUrl("");
     
-    const successCount = importResults.filter(r => r.success).length;
-    const failureCount = importResults.filter(r => !r.success).length;
-
-    toast({
-      title: "Bulk Import Complete",
-      description: `Successfully imported ${successCount} videos. ${failureCount} failed.`,
-    });
-
-    onComplete?.(importResults);
+    if (onImportComplete) {
+      onImportComplete(importResults);
+    }
   };
 
-  const handleReset = () => {
-    setUrlText("");
-    setResults([]);
-    setShowResults(false);
-    setProgress(0);
-  };
-
-  const urlCount = extractUrls(urlText).length;
+  const successCount = results.filter(r => r.success).length;
+  const failureCount = results.filter(r => !r.success).length;
 
   return (
-    <Card className="masculine-card border-primary/20">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Upload className="h-5 w-5 text-primary" />
-          <span className="masculine-text-gradient">Bulk URL Import</span>
-        </CardTitle>
-        <CardDescription>
-          Import multiple video URLs at once. Paste URLs separated by new lines or spaces.
-          Works with any video platform or direct video links.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {!showResults ? (
-          <>
-            <div className="space-y-2">
-              <Label htmlFor="urlList">Video URLs</Label>
-              <Textarea
-                id="urlList"
-                placeholder="Paste video URLs here (one per line or separated by spaces)&#10;&#10;Example:&#10;https://example.com/video1.mp4&#10;https://platform.com/watch?v=abc123&#10;https://site.com/videos/sample.webm"
-                value={urlText}
-                onChange={(e) => setUrlText(e.target.value)}
-                className="bg-muted/50 border-primary/20 focus:border-primary min-h-[200px] font-mono text-sm"
-              />
-              {urlCount > 0 && (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Link className="h-4 w-4" />
-                  <span>Found {urlCount} URL{urlCount !== 1 ? 's' : ''}</span>
-                  {urlCount > 500 && (
-                    <Badge variant="destructive">Too many URLs (limit: 500)</Badge>
-                  )}
-                </div>
-              )}
-            </div>
+    <div className="space-y-6">
+      <Card className="bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-orange-400">
+            <Upload className="w-5 h-5" />
+            Bulk URL Import
+          </CardTitle>
+          <p className="text-slate-300 text-sm">
+            Import up to 500 video URLs at once from supported platforms. Paste URLs directly or import from browser bookmarks.
+          </p>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">
+              Video URLs (one per line or comma-separated)
+            </label>
+            <Textarea
+              value={urls}
+              onChange={(e) => setUrls(e.target.value)}
+              placeholder={`Paste video URLs here, for example:
+https://www.thisvid.com/videos/hot-muscle-guys/
+https://www.pornhub.com/view_video.php?viewkey=abc123
+https://www.xvideos.com/video123/amazing-video/
 
-            <div className="bg-muted/30 p-4 rounded-lg">
-              <h4 className="font-semibold mb-2 flex items-center gap-2">
-                <AlertCircle className="h-4 w-4 text-primary" />
-                Supported Platforms
-              </h4>
-              <p className="text-sm text-muted-foreground mb-2">
-                This bulk import works with ANY website including:
-              </p>
-              <div className="grid grid-cols-2 gap-2 text-sm">
-                <div>• Direct video files (.mp4, .webm, etc.)</div>
-                <div>• Streaming platforms</div>
-                <div>• Adult content sites</div>
-                <div>• Video hosting services</div>
-                <div>• Custom video players</div>
-                <div>• Any URL with video content</div>
-              </div>
+Supports: ThisVid, PornHub, XVideos, RedTube, XHamster, and many more...`}
+              className="min-h-[150px] bg-slate-900 border-slate-600 text-white"
+              disabled={isImporting}
+            />
+          </div>
+          
+          <div className="flex items-center justify-between">
+            <div className="text-sm text-slate-400">
+              {urls.trim() ? `${extractUrls(urls).length} URLs detected` : 'No URLs detected'}
             </div>
-
             <Button
-              onClick={processUrls}
-              disabled={isProcessing || urlCount === 0 || urlCount > 500}
-              className="w-full masculine-gradient hover:scale-105 transition-transform duration-300 glow-primary"
+              onClick={handleImport}
+              disabled={isImporting || !urls.trim() || extractUrls(urls).length === 0}
+              className="bg-orange-600 hover:bg-orange-700 text-white"
             >
-              {isProcessing ? (
-                "Processing URLs..."
-              ) : (
-                <>
-                  <Upload className="w-4 h-4 mr-2" />
-                  Import {urlCount} URL{urlCount !== 1 ? 's' : ''}
-                </>
-              )}
+              {isImporting ? 'Importing...' : 'Start Import'}
             </Button>
-          </>
-        ) : (
-          <>
-            {/* Progress */}
-            {isProcessing && (
-              <div className="space-y-2">
-                <Label>Import Progress</Label>
-                <Progress value={progress} className="w-full" />
-                <p className="text-sm text-muted-foreground text-center">
-                  {Math.round(progress)}% complete
-                </p>
-              </div>
-            )}
+          </div>
+        </CardContent>
+      </Card>
 
-            {/* Results */}
+      {isImporting && (
+        <Card className="bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700">
+          <CardContent className="p-6">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <Label>Import Results</Label>
-                <div className="flex gap-2">
-                  <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/30">
-                    <CheckCircle className="h-3 w-3 mr-1" />
-                    {results.filter(r => r.success).length} Success
-                  </Badge>
-                  <Badge variant="outline" className="bg-red-500/10 text-red-500 border-red-500/30">
-                    <XCircle className="h-3 w-3 mr-1" />
-                    {results.filter(r => !r.success).length} Failed
-                  </Badge>
+                <span className="text-sm font-medium text-white">Import Progress</span>
+                <span className="text-sm text-slate-400">{Math.round(progress)}%</span>
+              </div>
+              <Progress value={progress} className="w-full" />
+              {currentUrl && (
+                <div className="text-xs text-slate-400 truncate">
+                  Currently processing: {currentUrl}
                 </div>
-              </div>
-
-              <div className="max-h-[400px] overflow-y-auto space-y-2">
-                {results.map((result, index) => (
-                  <div
-                    key={index}
-                    className={`p-3 rounded-lg border ${
-                      result.success
-                        ? "bg-green-500/5 border-green-500/20"
-                        : "bg-red-500/5 border-red-500/20"
-                    }`}
-                  >
-                    <div className="flex items-start gap-2">
-                      {result.success ? (
-                        <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                      ) : (
-                        <XCircle className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
-                      )}
-                      <div className="min-w-0 flex-1">
-                        <p className="text-sm font-medium truncate">
-                          {result.title || result.url}
-                        </p>
-                        <p className="text-xs text-muted-foreground truncate">
-                          {result.url}
-                        </p>
-                        {result.error && (
-                          <p className="text-xs text-red-500 mt-1">{result.error}</p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="flex gap-2">
-                <Button
-                  onClick={handleReset}
-                  variant="outline"
-                  className="flex-1 border-primary/30 hover:bg-primary/10"
-                >
-                  Import More URLs
-                </Button>
-                <Button
-                  onClick={() => setShowResults(false)}
-                  variant="default"
-                  className="flex-1 masculine-gradient"
-                >
-                  Done
-                </Button>
-              </div>
+              )}
             </div>
-          </>
-        )}
-      </CardContent>
-    </Card>
+          </CardContent>
+        </Card>
+      )}
+
+      {results.length > 0 && (
+        <Card className="bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700">
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              <span className="text-white">Import Results</span>
+              <div className="flex gap-2">
+                <Badge className="bg-green-600 text-white">
+                  <CheckCircle className="w-3 h-3 mr-1" />
+                  {successCount} Success
+                </Badge>
+                {failureCount > 0 && (
+                  <Badge className="bg-red-600 text-white">
+                    <XCircle className="w-3 h-3 mr-1" />
+                    {failureCount} Failed
+                  </Badge>
+                )}
+              </div>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="max-h-60 overflow-y-auto space-y-2">
+              {results.map((result, index) => (
+                <div
+                  key={index}
+                  className={cn(
+                    "flex items-start gap-3 p-3 rounded-lg border",
+                    result.success
+                      ? "bg-green-900/20 border-green-700/50"
+                      : "bg-red-900/20 border-red-700/50"
+                  )}
+                >
+                  <div className="flex-shrink-0 mt-0.5">
+                    {result.success ? (
+                      <CheckCircle className="w-4 h-4 text-green-400" />
+                    ) : (
+                      <XCircle className="w-4 h-4 text-red-400" />
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium text-white text-sm">
+                      {result.title || 'Untitled'}
+                    </div>
+                    <div className="text-xs text-slate-400 truncate flex items-center gap-1">
+                      <Link className="w-3 h-3" />
+                      {result.url}
+                    </div>
+                    {result.error && (
+                      <div className="text-xs text-red-400 flex items-center gap-1 mt-1">
+                        <AlertCircle className="w-3 h-3" />
+                        {result.error}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
   );
 }

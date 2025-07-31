@@ -109,10 +109,10 @@ export const analyses = pgTable("analyses", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   videoId: varchar("video_id").references(() => videos.id),
   performerId: varchar("performer_id").references(() => performers.id),
-  videoFilename: text("video_filename").notNull(),
-  videoPath: text("video_path").notNull(),
-  targetFaceFilename: text("target_face_filename").notNull(),
-  targetFacePath: text("target_face_path").notNull(),
+  videoFilename: text("video_filename"),
+  videoPath: text("video_path"),
+  targetFaceFilename: text("target_face_filename"),
+  targetFacePath: text("target_face_path"),
   status: text("status").notNull().default("pending"), // pending, processing, completed, error
   tolerance: real("tolerance").notNull().default(0.5),
   frameSkip: integer("frame_skip").notNull().default(5),
@@ -424,6 +424,13 @@ export const insertAnalysisSchema = createInsertSchema(analyses).pick({
   tolerance: true,
   frameSkip: true,
   includeThumbnails: true,
+}).partial({
+  videoId: true,
+  performerId: true,
+  videoFilename: true,
+  videoPath: true,
+  targetFaceFilename: true,
+  targetFacePath: true,
 });
 
 export const insertPlaylistSchema = createInsertSchema(playlists).pick({

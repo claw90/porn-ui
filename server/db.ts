@@ -5,11 +5,10 @@ import * as schema from "@shared/schema";
 
 neonConfig.webSocketConstructor = ws;
 
-if (!process.env.DATABASE_URL) {
-  throw new Error(
-    "DATABASE_URL must be set. Did you forget to provision a database?",
-  );
-}
+const DATABASE_URL = process.env.DATABASE_URL || "postgresql://porn_ui_db_user:2tloHJqU6uFQCpf305TAbYK1Ck5uUBpE@dpg-d25ruoruibrs739arbn0-a.oregon-postgres.render.com/porn_ui_db?sslmode=require";
 
-export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+export const pool = new Pool({
+  connectionString: DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
+});
 export const db = drizzle({ client: pool, schema });
