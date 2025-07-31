@@ -493,10 +493,24 @@ export default function FaceRecognition() {
                   <Button
                     onClick={handleSubmit}
                     disabled={getAnalysisMode() === "none" || isAnalyzing}
-                    className="bg-purple-600 hover:bg-purple-700 text-white md:min-w-[180px]"
+                    className={cn(
+                      "text-white md:min-w-[180px] transition-all duration-300",
+                      isAnalyzing
+                        ? "bg-purple-700 shadow-lg shadow-purple-500/25"
+                        : "bg-purple-600 hover:bg-purple-700"
+                    )}
                   >
-                    <Brain className={cn("w-4 h-4 mr-2", isAnalyzing && "animate-pulse")} />
-                    {getSubmitButtonText()}
+                    {isAnalyzing ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-white/20 border-t-white mr-2"></div>
+                        {getSubmitButtonText()}
+                      </>
+                    ) : (
+                      <>
+                        <Brain className="w-4 h-4 mr-2" />
+                        {getSubmitButtonText()}
+                      </>
+                    )}
                   </Button>
                 </div>
 
