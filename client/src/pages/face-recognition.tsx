@@ -372,7 +372,7 @@ export default function FaceRecognition() {
                         ? 'Drop video here'
                         : videoFile
                           ? videoFile.name.length > 20 ? videoFile.name.substring(0, 20) + '...' : videoFile.name
-                          : 'Video File (Required)'
+                          : 'Video File (Optional)'
                       }
                     </div>
                     <div className="text-xs text-slate-400">
