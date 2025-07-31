@@ -412,7 +412,7 @@ export default function FaceRecognition() {
                         ? 'Drop image here'
                         : faceFile
                           ? faceFile.name.length > 20 ? faceFile.name.substring(0, 20) + '...' : faceFile.name
-                          : 'Target Face (Required)'
+                          : 'Target Face (Optional)'
                       }
                     </div>
                     <div className="text-xs text-slate-400">
