@@ -481,7 +481,7 @@ export default function Recommendations() {
                     </CardHeader>
                     <CardContent>
                       <div className="flex flex-wrap gap-2">
-                        {userProfile.preferredCategories.slice(0, 10).map((category, index) => (
+                        {(userProfile.preferredCategories || []).slice(0, 10).map((category, index) => (
                           <Badge key={index} className="bg-orange-500/20 text-orange-300">
                             {category}
                           </Badge>
