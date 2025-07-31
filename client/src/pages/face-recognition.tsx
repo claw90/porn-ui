@@ -482,7 +482,7 @@ export default function FaceRecognition() {
 
                   <Button
                     onClick={handleSubmit}
-                    disabled={getAnalysisMode() === "none" || isAnalyzing}
+                    disabled={getAnalysisMode() !== "ready" || isAnalyzing}
                     className="bg-purple-600 hover:bg-purple-700 text-white md:min-w-[180px]"
                   >
                     <Brain className={cn("w-4 h-4 mr-2", isAnalyzing && "animate-pulse")} />
