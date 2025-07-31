@@ -509,12 +509,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       console.log('Analysis created with ID:', analysis.id);
 
-      // Start processing in background
-      processVideoAnalysis(analysis.id, analysis.videoPath, analysis.targetFacePath, {
-        tolerance: analysis.tolerance,
-        frameSkip: analysis.frameSkip,
-        includeThumbnails: analysis.includeThumbnails === 1
-      }).catch(console.error);
+      // Start processing in background based on analysis mode
+      if (analysis.videoPath && analysis.targetFacePath) {
+        // Both files: face matching analysis
+        processVideoAnalysis(analysis.id, analysis.videoPath, analysis.targetFacePath, {
+          tolerance: analysis.tolerance,
+          frameSkip: analysis.frameSkip,
+          includeThumbnails: analysis.includeThumbnails === 1
+        }).catch(console.error);
+      } else if (analysis.videoPath) {
+        // Video only: detect all faces
+        processVideoOnlyAnalysis(analysis.id, analysis.videoPath, {
+          frameSkip: analysis.frameSkip,
+          includeThumbnails: analysis.includeThumbnails === 1
+        }).catch(console.error);
+      } else if (analysis.targetFacePath) {
+        // Face only: analyze characteristics
+        processFaceOnlyAnalysis(analysis.id, analysis.targetFacePath).catch(console.error);
+      }
 
       res.json(analysis);
     } catch (error) {
