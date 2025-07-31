@@ -67,7 +67,7 @@ interface DiscoveryStats {
 
 const platforms = [
   { id: 'thisvid', name: 'ThisVid', icon: '🔥', color: 'orange' },
-  { id: 'pornhub', name: 'PornHub', icon: '🔞', color: 'yellow' },
+  { id: 'pornhub', name: 'PornHub', icon: '��', color: 'yellow' },
   { id: 'xvideos', name: 'XVideos', icon: '❌', color: 'red' },
   { id: 'redtube', name: 'RedTube', icon: '🔴', color: 'red' },
   { id: 'xhamster', name: 'XHamster', icon: '🐹', color: 'orange' },
@@ -276,9 +276,9 @@ export default function Discovery() {
           </p>
           
           {/* Tags */}
-          {video.tags.length > 0 && (
+          {video.tags && video.tags.length > 0 && (
             <div className="flex flex-wrap gap-1 mb-3">
-              {video.tags.slice(0, 3).map((tag, index) => (
+              {(video.tags || []).slice(0, 3).map((tag, index) => (
                 <Badge key={index} variant="outline" className="text-xs text-slate-400 border-slate-600">
                   {tag}
                 </Badge>
