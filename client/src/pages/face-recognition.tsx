@@ -155,7 +155,7 @@ export default function FaceRecognition() {
     try {
       const response = await fetch(`/api/analyses/${analysisId}/report`);
       if (!response.ok) throw new Error('Failed to download report');
-      
+
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -168,6 +168,58 @@ export default function FaceRecognition() {
     } catch (error) {
       console.error('Download error:', error);
       alert('Failed to download report');
+    }
+  };
+
+  // Drag and drop handlers for video upload
+  const handleVideoDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setVideoDragOver(true);
+  };
+
+  const handleVideoDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setVideoDragOver(false);
+  };
+
+  const handleVideoDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setVideoDragOver(false);
+
+    const files = e.dataTransfer.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      if (file.type.startsWith('video/')) {
+        setVideoFile(file);
+      } else {
+        alert('Please drop a valid video file (MP4, AVI, MOV, MKV)');
+      }
+    }
+  };
+
+  // Drag and drop handlers for face upload
+  const handleFaceDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setFaceDragOver(true);
+  };
+
+  const handleFaceDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setFaceDragOver(false);
+  };
+
+  const handleFaceDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setFaceDragOver(false);
+
+    const files = e.dataTransfer.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      if (file.type.startsWith('image/')) {
+        setFaceFile(file);
+      } else {
+        alert('Please drop a valid image file (JPG, PNG, JPEG)');
+      }
     }
   };
 
