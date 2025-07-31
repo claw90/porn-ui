@@ -349,7 +349,9 @@ export default function FaceRecognition() {
                       "border-2 border-dashed rounded-lg p-4 text-center transition-colors cursor-pointer",
                       videoDragOver
                         ? "border-purple-400 bg-purple-500/10"
-                        : "border-slate-600 hover:border-slate-500"
+                        : videoFile
+                          ? "border-green-500 bg-green-500/10"
+                          : "border-slate-600 hover:border-slate-500"
                     )}
                     onDragOver={handleVideoDragOver}
                     onDragLeave={handleVideoDragLeave}
@@ -358,7 +360,8 @@ export default function FaceRecognition() {
                   >
                     <VideoIcon className={cn(
                       "w-6 h-6 mx-auto mb-2",
-                      videoDragOver ? "text-purple-400" : "text-blue-400"
+                      videoDragOver ? "text-purple-400" :
+                      videoFile ? "text-green-400" : "text-blue-400"
                     )} />
                     <input
                       type="file"
@@ -372,7 +375,7 @@ export default function FaceRecognition() {
                         ? 'Drop video here'
                         : videoFile
                           ? videoFile.name.length > 20 ? videoFile.name.substring(0, 20) + '...' : videoFile.name
-                          : 'Video File'
+                          : 'Video File (Required)'
                       }
                     </div>
                     <div className="text-xs text-slate-400">
@@ -386,7 +389,9 @@ export default function FaceRecognition() {
                       "border-2 border-dashed rounded-lg p-4 text-center transition-colors cursor-pointer",
                       faceDragOver
                         ? "border-green-400 bg-green-500/10"
-                        : "border-slate-600 hover:border-slate-500"
+                        : faceFile
+                          ? "border-green-500 bg-green-500/10"
+                          : "border-slate-600 hover:border-slate-500"
                     )}
                     onDragOver={handleFaceDragOver}
                     onDragLeave={handleFaceDragLeave}
@@ -395,7 +400,8 @@ export default function FaceRecognition() {
                   >
                     <FileImage className={cn(
                       "w-6 h-6 mx-auto mb-2",
-                      faceDragOver ? "text-green-400" : "text-green-400"
+                      faceDragOver ? "text-green-400" :
+                      faceFile ? "text-green-400" : "text-orange-400"
                     )} />
                     <input
                       type="file"
@@ -409,7 +415,7 @@ export default function FaceRecognition() {
                         ? 'Drop image here'
                         : faceFile
                           ? faceFile.name.length > 20 ? faceFile.name.substring(0, 20) + '...' : faceFile.name
-                          : 'Target Face'
+                          : 'Target Face (Required)'
                       }
                     </div>
                     <div className="text-xs text-slate-400">
