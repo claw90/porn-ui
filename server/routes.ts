@@ -13,7 +13,7 @@ import {
   insertCollectionSchema,
   insertPlaylistSchema
 } from "@shared/schema";
-import { processVideoAnalysis } from "./services/faceRecognition";
+import { processVideoAnalysis, processVideoOnlyAnalysis, processFaceOnlyAnalysis } from "./services/faceRecognition";
 import { generatePDFReport } from "./services/pdfGenerator";
 import { performerSearchService } from "./services/performerSearchService";
 import { DuplicateDetectionService } from "./services/duplicateDetectionService";
