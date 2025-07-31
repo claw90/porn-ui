@@ -421,16 +421,23 @@ export default function FaceRecognition() {
                   </div>
                 </div>
 
-                {/* Analysis Requirements Info */}
-                <div className="bg-purple-900/20 border border-purple-700/50 rounded-lg p-3">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Search className="w-4 h-4 text-purple-400" />
-                    <span className="text-white font-medium text-sm">Face Matching Analysis</span>
+                {/* Analysis Modes Info */}
+                <div className="grid grid-cols-3 gap-2 text-xs">
+                  <div className="text-center p-2 bg-slate-800/30 rounded">
+                    <VideoIcon className="w-3 h-3 mx-auto mb-1 text-blue-400" />
+                    <div className="text-slate-300">Video Only</div>
+                    <div className="text-slate-500">Detect all faces</div>
                   </div>
-                  <p className="text-xs text-slate-400">
-                    Upload both a video file and target face image to find specific face matches.
-                    The system will scan through video frames to locate appearances of the target face.
-                  </p>
+                  <div className="text-center p-2 bg-slate-800/30 rounded">
+                    <FileImage className="w-3 h-3 mx-auto mb-1 text-green-400" />
+                    <div className="text-slate-300">Face Only</div>
+                    <div className="text-slate-500">Analyze features</div>
+                  </div>
+                  <div className="text-center p-2 bg-slate-800/30 rounded">
+                    <Search className="w-3 h-3 mx-auto mb-1 text-purple-400" />
+                    <div className="text-slate-300">Both Files</div>
+                    <div className="text-slate-500">Find matches</div>
+                  </div>
                 </div>
 
                 {/* Analysis Parameters & Submit */}
