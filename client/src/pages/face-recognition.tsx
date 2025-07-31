@@ -96,16 +96,16 @@ export default function FaceRecognition() {
 
   const handleSubmit = async () => {
     const mode = getAnalysisMode();
-    if (mode === "none") return;
+    if (mode === "none" || isAnalyzing) return;
 
     setIsAnalyzing(true);
 
     try {
       const formData = new FormData();
-      
+
       if (videoFile) formData.append('video', videoFile);
       if (faceFile) formData.append('targetFace', faceFile);
-      
+
       formData.append('tolerance', tolerance.toString());
       formData.append('frameSkip', frameSkip.toString());
       formData.append('includeThumbnails', includeThumbnails.toString());
@@ -115,15 +115,21 @@ export default function FaceRecognition() {
         body: formData,
       });
 
-      const data = await response.json();
-
+      // Check response status before reading body
       if (!response.ok) {
-        throw new Error(data.message || 'Analysis failed');
+        let errorMessage = 'Analysis failed';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch {
+          errorMessage = `Analysis failed with status: ${response.status}`;
+        }
+        throw new Error(errorMessage);
       }
 
-      const analysis = data;
+      const analysis = await response.json();
       setCurrentAnalysis(analysis.id);
-      
+
       // Start polling for status
       const checkStatus = () => {
         fetch(`/api/analyses/${analysis.id}`)
@@ -142,7 +148,7 @@ export default function FaceRecognition() {
             setCurrentAnalysis(null);
           });
       };
-      
+
       checkStatus();
     } catch (error) {
       console.error('Analysis error:', error);
