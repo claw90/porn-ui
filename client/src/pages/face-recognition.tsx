@@ -312,9 +312,9 @@ export default function FaceRecognition() {
                   <Upload className="w-5 h-5 text-purple-400" />
                   Upload Files
                 </CardTitle>
-                <p className="text-slate-400 text-sm">
+                <div className="text-slate-400 text-sm">
                   Upload at least one file to begin analysis. Mode: <Badge className="ml-2 bg-purple-500/20 text-purple-300">{getAnalysisMode()}</Badge>
-                </p>
+                </div>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
