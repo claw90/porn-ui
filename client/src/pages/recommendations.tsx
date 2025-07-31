@@ -450,19 +450,19 @@ export default function Recommendations() {
                   <ProfileInsight
                     icon={Heart}
                     title="Top Category"
-                    value={userProfile.preferredCategories[0] || 'Exploring'}
+                    value={(userProfile.preferredCategories && userProfile.preferredCategories.length > 0) ? userProfile.preferredCategories[0] : 'Exploring'}
                     description="Your most watched category"
                   />
                   <ProfileInsight
                     icon={Clock}
                     title="Watch Time"
-                    value={`${Math.round(userProfile.viewingPatterns.averageWatchTime / 60)}m`}
+                    value={`${Math.round((userProfile.viewingPatterns?.averageWatchTime || 0) / 60)}m`}
                     description="Average session length"
                   />
                   <ProfileInsight
                     icon={Users}
                     title="Favorite Type"
-                    value={userProfile.personalityTraits[0] || 'Varied'}
+                    value={(userProfile.personalityTraits && userProfile.personalityTraits.length > 0) ? userProfile.personalityTraits[0] : 'Varied'}
                     description="Preferred content style"
                   />
                   <ProfileInsight
