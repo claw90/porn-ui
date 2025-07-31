@@ -286,17 +286,18 @@ export default function FaceRecognition() {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
       <div className="p-6">
         {/* Header */}
-        <div className="mb-6">
-          <div className="flex items-center gap-2 mb-2">
-            <Server className="w-6 h-6 text-purple-400" />
-            <Badge className="bg-red-500/20 text-red-300">Backend Only</Badge>
-            <Badge className="bg-blue-500/20 text-blue-300">Advanced Tool</Badge>
+        <div className="mb-4">
+          <div className="flex items-center justify-between mb-2">
+            <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+              <Brain className="w-6 h-6 text-purple-400" />
+              Face Recognition Analysis
+            </h1>
+            <div className="flex items-center gap-2">
+              <Badge className="bg-red-500/20 text-red-300 text-xs">Backend Only</Badge>
+              <Badge className="bg-blue-500/20 text-blue-300 text-xs">Advanced Tool</Badge>
+            </div>
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
-            <Brain className="w-8 h-8 text-purple-400" />
-            Face Recognition Analysis
-          </h1>
-          <p className="text-slate-400">
+          <p className="text-slate-400 text-sm">
             Server-side Python backend for advanced face detection and matching across video content
           </p>
         </div>
