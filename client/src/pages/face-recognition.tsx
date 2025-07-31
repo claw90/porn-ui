@@ -415,8 +415,22 @@ export default function FaceRecognition() {
                   {/* Face Upload */}
                   <div className="space-y-3">
                     <Label className="text-white font-medium">Target Face Image (Optional)</Label>
-                    <div className="border-2 border-dashed border-slate-600 rounded-lg p-6 text-center hover:border-slate-500 transition-colors">
-                      <FileImage className="w-8 h-8 mx-auto mb-3 text-slate-400" />
+                    <div
+                      className={cn(
+                        "border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer",
+                        faceDragOver
+                          ? "border-green-400 bg-green-500/10"
+                          : "border-slate-600 hover:border-slate-500"
+                      )}
+                      onDragOver={handleFaceDragOver}
+                      onDragLeave={handleFaceDragLeave}
+                      onDrop={handleFaceDrop}
+                      onClick={() => document.getElementById('face-upload')?.click()}
+                    >
+                      <FileImage className={cn(
+                        "w-8 h-8 mx-auto mb-3",
+                        faceDragOver ? "text-green-400" : "text-slate-400"
+                      )} />
                       <input
                         type="file"
                         accept="image/*"
@@ -424,14 +438,17 @@ export default function FaceRecognition() {
                         className="hidden"
                         id="face-upload"
                       />
-                      <label htmlFor="face-upload" className="cursor-pointer">
-                        <div className="text-white font-medium mb-1">
-                          {faceFile ? faceFile.name : 'Choose face image'}
-                        </div>
-                        <div className="text-xs text-slate-400">
-                          JPG, PNG, JPEG supported
-                        </div>
-                      </label>
+                      <div className="text-white font-medium mb-1">
+                        {faceDragOver
+                          ? 'Drop image file here'
+                          : faceFile
+                            ? faceFile.name
+                            : 'Choose or drop face image'
+                        }
+                      </div>
+                      <div className="text-xs text-slate-400">
+                        JPG, PNG, JPEG supported
+                      </div>
                     </div>
                   </div>
                 </div>
