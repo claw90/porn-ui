@@ -513,7 +513,7 @@ export default function Recommendations() {
                       <div>
                         <h4 className="text-sm font-medium text-slate-300 mb-1">Peak Hours</h4>
                         <div className="flex flex-wrap gap-1">
-                          {userProfile.viewingPatterns.timeOfDay.map((time, index) => (
+                          {(userProfile.viewingPatterns?.timeOfDay || []).map((time, index) => (
                             <Badge key={index} className="bg-blue-500/20 text-blue-300 text-xs">
                               {time}
                             </Badge>
@@ -523,7 +523,7 @@ export default function Recommendations() {
                       <div>
                         <h4 className="text-sm font-medium text-slate-300 mb-1">Active Days</h4>
                         <div className="flex flex-wrap gap-1">
-                          {userProfile.viewingPatterns.dayOfWeek.map((day, index) => (
+                          {(userProfile.viewingPatterns?.dayOfWeek || []).map((day, index) => (
                             <Badge key={index} className="bg-green-500/20 text-green-300 text-xs">
                               {day}
                             </Badge>
