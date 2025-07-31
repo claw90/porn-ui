@@ -501,22 +501,57 @@ export default function FaceRecognition() {
                 </div>
 
                 {/* Analysis Progress */}
-                {isAnalyzing && analysisStatus && (
-                  <Card className="bg-slate-800/50 border-slate-700">
+                {isAnalyzing && (
+                  <Card className="bg-gradient-to-r from-purple-900/30 to-blue-900/30 border-purple-500/50 shadow-lg">
                     <CardContent className="p-4">
-                      <div className="flex items-center gap-3 mb-3">
-                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-500"></div>
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="relative">
+                          <div className="animate-spin rounded-full h-8 w-8 border-4 border-purple-500/20 border-t-purple-500"></div>
+                          <div className="absolute inset-0 animate-ping rounded-full h-8 w-8 border border-purple-500/50"></div>
+                        </div>
                         <div>
-                          <h4 className="text-white font-medium">Analysis in Progress</h4>
-                          <p className="text-slate-400 text-sm">Processing video frames with Python backend...</p>
+                          <h4 className="text-white font-semibold flex items-center gap-2">
+                            <Brain className="w-4 h-4 text-purple-400" />
+                            Analysis in Progress
+                          </h4>
+                          <p className="text-slate-300 text-sm">
+                            {analysisStatus ?
+                              `Processing ${getAnalysisMode() === 'face-only' ? 'face characteristics' : 'video frames'} with Python backend...` :
+                              'Initializing analysis engine...'
+                            }
+                          </p>
                         </div>
                       </div>
-                      <div className="space-y-2">
+
+                      {/* Progress Bar */}
+                      <div className="space-y-3">
                         <div className="flex justify-between text-sm">
-                          <span className="text-slate-400">Status: {analysisStatus.status}</span>
-                          <span className="text-slate-400">Matches found: {analysisStatus.matchCount || 0}</span>
+                          <span className="text-slate-300 font-medium">
+                            Status: {analysisStatus?.status || 'Starting...'}
+                          </span>
+                          {analysisStatus && (
+                            <span className="text-slate-300">
+                              Results: {analysisStatus.matchCount || 0}
+                            </span>
+                          )}
                         </div>
-                        <Progress value={analysisStatus.status === 'processing' ? 50 : 10} />
+
+                        <div className="relative">
+                          <Progress
+                            value={analysisStatus?.status === 'processing' ? 65 : analysisStatus?.status === 'completed' ? 100 : 15}
+                            className="h-2"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-full animate-pulse"></div>
+                        </div>
+
+                        {/* Status Messages */}
+                        <div className="flex items-center justify-between text-xs text-slate-400">
+                          <span>🔍 {analysisStatus ? 'Analyzing frames...' : 'Connecting to backend...'}</span>
+                          <span className="flex items-center gap-1">
+                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                            Active
+                          </span>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
