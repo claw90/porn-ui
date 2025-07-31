@@ -1,0 +1,87 @@
+blobs_path: C:\Users\chris\.stash\blobs
+blobs_storage: FILESYSTEM
+cache: C:\Users\chris\.stash\cache
+calculate_md5: false
+create_image_clip_from_videos: false
+dangerous_allow_public_without_auth: "false"
+database: C:\Users\chris\.stash\stash-go.sqlite
+gallery_cover_regex: (poster|cover|folder|board)\.[^\.]+$
+generated: C:\Users\chris\.stash\generated
+host: 0.0.0.0
+jwt_secret_key: e50937641db83ab0591874e31968a6a0b1dd03057e2cf0de0f2b188908c1a83d
+no_proxy: localhost,127.0.0.1,192.168.0.0/16,10.0.0.0/8,172.16.0.0/12
+nobrowser: false
+notifications_enabled: true
+parallel_tasks: 1
+plugins:
+    package_sources:
+        - localpath: community
+          name: Community (stable)
+          url: https://stashapp.github.io/CommunityScripts/stable/index.yml
+plugins_path: C:\Users\chris\.stash\plugins
+port: 9999
+preview_audio: true
+preview_exclude_end: "0"
+preview_exclude_start: "0"
+preview_segment_duration: 0.75
+preview_segments: 12
+scrapers:
+    package_sources:
+        - localpath: community
+          name: Community (stable)
+          url: https://stashapp.github.io/CommunityScrapers/stable/index.yml
+scrapers_path: C:\Users\chris\.stash\scrapers
+security_tripwire_accessed_from_public_internet: ""
+sequential_scanning: false
+session_store_key: 5651537748d8450625dfdb90278c61f6758d58cd443f95595362972c5662c371
+show_one_time_moved_notification: false
+sound_on_preview: false
+stash:
+    - path: '"C:\Users\chris\OneDrive\Desktop\thisvid_ideas\static\videos"'
+      excludevideo: false
+      excludeimage: false
+theme_color: '#202b33'
+ui:
+    frontPageContent:
+        - __typename: CustomFilter
+          direction: DESC
+          message:
+            id: recently_released_objects
+            values:
+                objects: Scenes
+          mode: SCENES
+          sortBy: date
+        - __typename: CustomFilter
+          direction: DESC
+          message:
+            id: recently_added_objects
+            values:
+                objects: Studios
+          mode: STUDIOS
+          sortBy: created_at
+        - __typename: CustomFilter
+          direction: DESC
+          message:
+            id: recently_released_objects
+            values:
+                objects: Groups
+          mode: GROUPS
+          sortBy: date
+        - __typename: CustomFilter
+          direction: DESC
+          message:
+            id: recently_added_objects
+            values:
+                objects: Performers
+          mode: PERFORMERS
+          sortBy: created_at
+        - __typename: CustomFilter
+          direction: DESC
+          message:
+            id: recently_released_objects
+            values:
+                objects: Galleries
+          mode: GALLERIES
+          sortBy: date
+video_file_naming_algorithm: OSHASH
+write_image_thumbnails: true
